@@ -184,7 +184,7 @@
     tileBase = "#/all";
     const groups = {};
     D.photos.forEach(ph => { const y = ph.taken ? ph.taken.slice(0, 4) : "Undated"; (groups[y] = groups[y] || []).push(ph); });
-    const years = Object.keys(groups).sort((a, b) => (b === "Undated") - (a === "Undated") || b.localeCompare(a));
+    const years = Object.keys(groups).sort((a, b) => (a === "Undated") - (b === "Undated") || b.localeCompare(a));
     years.forEach(y => groups[y].sort((a, b) => (b.taken || "").localeCompare(a.taken || "")));
     lbList = years.flatMap(y => groups[y]);
     view.innerHTML = `<header class="page-head"><h1>All photographs</h1>

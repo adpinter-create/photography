@@ -32,7 +32,7 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 /* ---------- top bar ---------- */
 .bar { position: fixed; inset: 0 0 auto 0; z-index: 30; display: flex; align-items: baseline; justify-content: space-between; gap: 16px;
   padding: max(18px, env(safe-area-inset-top)) var(--pad) 18px; transition: background-color .4s, backdrop-filter .4s; }
-.bar.solid { background: rgba(0, 0, 0, .78); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); }
+.bar.solid { background: rgba(0, 0, 0, .88); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); }
 .name { font: 700 1.45rem/1 var(--display); letter-spacing: .01em; text-decoration: none; }
 .bar nav { display: flex; gap: clamp(14px, 2.4vw, 32px); }
 .bar nav a { font-size: 1rem; text-decoration: none; color: rgba(238, 236, 230, .78); padding: 4px 0; border-bottom: 1px solid transparent; transition: color .3s, border-color .3s; }
@@ -101,7 +101,7 @@ body.lit .index li { opacity: 1; transition: opacity .9s var(--ease); transition
 /* ---------- all photographs ---------- */
 .page-head { padding: 132px var(--pad) 8px; }
 .page-head h1 { margin: 0; font: 800 clamp(3.4rem, 10vw, 9rem)/.85 var(--display); letter-spacing: -.004em; }
-.page-head p { margin: 14px 0 0; color: var(--ash); max-width: 38rem; }
+.page-head p { margin: 30px 0 0; color: var(--ash); max-width: 38rem; }
 .year { display: flex; align-items: baseline; gap: 18px; padding: 56px var(--pad) 0; margin: 0; font: 300 clamp(2.4rem, 6vw, 4.6rem)/1 var(--display); }
 .year small { font: 400 1rem var(--serif); color: var(--ash); }
 
