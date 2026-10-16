@@ -1,0 +1,11 @@
+Copyright (c) 2010-2026 Andrei Pinter. All rights reserved.
+
+The photographs in this repository (everything under img/) are the copyrighted work of Andrei Pinter.
+They are published here only so this website can display them. No license is granted to copy, download
+for reuse, modify, distribute, sell, or use them to train machine-learning models, in whole or in part,
+without written permission from Andrei Pinter.
+
+The site code (index.html, styles.css, app.js, tools/) is also copyright Andrei Pinter, all rights reserved.
+
+The fonts in fonts/ are by their respective authors and are licensed under the SIL Open Font License 1.1;
+see fonts/OFL-*.txt.

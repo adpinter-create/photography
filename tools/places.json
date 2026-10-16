@@ -1,0 +1,128 @@
+{
+ "South Korea": {
+  "kind": "country",
+  "cover": "site-20240427-dsc2426",
+  "city": "Seoul",
+  "coords": [
+   37.566,
+   126.978
+  ]
+ },
+ "Missouri": {
+  "kind": "state",
+  "cover": "site-img-5330-copy",
+  "city": "Kansas City",
+  "coords": [
+   39.0997,
+   -94.5786
+  ]
+ },
+ "Canada": {
+  "kind": "country",
+  "cover": "architecture-img-7637",
+  "city": "Toronto",
+  "coords": [
+   43.7001,
+   -79.4163
+  ]
+ },
+ "Texas": {
+  "kind": "state",
+  "cover": "site-dsc6360",
+  "city": "Austin",
+  "coords": [
+   30.2672,
+   -97.7431
+  ]
+ },
+ "Michigan": {
+  "kind": "state",
+  "cover": "site-10513414-10203404200804138-4271366513124786753-n",
+  "city": "Detroit",
+  "coords": [
+   42.3314,
+   -83.0458
+  ]
+ },
+ "Illinois": {
+  "kind": "state",
+  "cover": "site-img-6982",
+  "city": "Chicago",
+  "coords": [
+   41.85,
+   -87.65
+  ]
+ },
+ "Washington": {
+  "kind": "state",
+  "cover": "site-dsc0944",
+  "city": "Seattle",
+  "coords": [
+   47.6062,
+   -122.3321
+  ]
+ },
+ "Utah": {
+  "kind": "state",
+  "cover": "site-14195293-10209273113083277-4981012239719826981-o",
+  "city": "Salt Lake City",
+  "coords": [
+   40.7608,
+   -111.8911
+  ]
+ },
+ "Washington, D.C.": {
+  "kind": "district",
+  "cover": "architecture-img-1491",
+  "city": "Washington",
+  "coords": [
+   38.8951,
+   -77.0364
+  ]
+ },
+ "New York": {
+  "kind": "state",
+  "cover": "site-img-0317",
+  "city": "New York City",
+  "coords": [
+   40.7143,
+   -74.006
+  ]
+ },
+ "California": {
+  "kind": "state",
+  "cover": "landscape-photo-3",
+  "city": "San Francisco",
+  "coords": [
+   37.7749,
+   -122.4194
+  ]
+ },
+ "Iowa": {
+  "kind": "state",
+  "cover": "site-1496924-10202312808120003-2521664-n",
+  "city": "Des Moines",
+  "coords": [
+   41.6005,
+   -93.6091
+  ]
+ },
+ "Minnesota": {
+  "kind": "state",
+  "cover": "site-min-ar-2",
+  "city": "Minneapolis",
+  "coords": [
+   44.98,
+   -93.2638
+  ]
+ },
+ "Colorado": {
+  "kind": "state",
+  "cover": "landscape-1625457-10202319920177800-1887182712-n",
+  "city": "Rocky Mountain National Park",
+  "coords": [
+   40.3428,
+   -105.6836
+  ]
+ }
+}
