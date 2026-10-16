@@ -2,7 +2,7 @@
 
 A photography portfolio arranged by place: one gallery per US state, and per country everywhere else.
 
-Live (until a custom domain is set): https://adpinter-create.github.io/photography/
+Live: https://photography.andreipinter.com/
 
 ## What's here
 
