@@ -3,10 +3,11 @@
 
   python3 tools/build.py --src ~/Website/andreipinter-site
 
---src is the folder caption_photos.py writes: photos.json plus 2048px web copies that already carry no metadata.
-This script groups photos by US state (or country outside the US), gives each photo a short stable id, writes
-three sizes (img/lg 2048, img/md 1280, img/sm 640), samples a colour per photo and an accent per place, and
-writes data.json. Every image is checked for EXIF/XMP before the build finishes.
+--src is the folder caption_photos.py writes: photos.json plus web copies (up to 3072px) that already carry no
+metadata. This script groups photos by US state (or country outside the US), gives each photo a short stable id,
+copies the web copy as img/lg untouched, makes img/md (1600px) and img/sm (800px), samples a colour per photo and
+an accent per place, and writes data.json. Every image is checked for EXIF/XMP before the build finishes.
+app.js works out each file's real width from these sizes, so keep its BOX in step with SIZES.
 """
 import argparse, colorsys, hashlib, json, re, shutil, sys
 from datetime import date
@@ -16,7 +17,7 @@ import numpy as np
 from PIL import Image
 
 ROOT = Path(__file__).resolve().parent.parent
-SIZES = {"md": (1280, 82), "sm": (640, 78)}
+SIZES = {"md": (1600, 85), "sm": (800, 80)}
 
 
 def slugify(s):
@@ -113,13 +114,16 @@ def main():
         pid = hashlib.sha1(p["id"].encode()).hexdigest()[:8]
         lg = out / "img" / "lg" / f"{pid}.jpg"
         srcfile = src / p["src"]
-        if not lg.exists() or lg.stat().st_size != srcfile.stat().st_size:
+        fresh = not lg.exists() or lg.read_bytes() != srcfile.read_bytes()
+        if fresh:
             lg.parent.mkdir(parents=True, exist_ok=True)
             shutil.copyfile(srcfile, lg)
         im = None
         for name, (size, q) in SIZES.items():
             dest = out / "img" / name / f"{pid}.jpg"
-            if not dest.exists() or dest.stat().st_mtime < lg.stat().st_mtime:
+            # remake when the large copy changed or the size settings did (not on file dates,
+            # which a fresh git checkout resets)
+            if fresh or not dest.exists() or max(Image.open(dest).size) != min(size, max(p["w"], p["h"])):
                 im = im or Image.open(lg)
                 clean_save(im, dest, size, q)
         for name in ("lg", *SIZES):

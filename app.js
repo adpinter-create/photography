@@ -12,7 +12,18 @@
   let D, P = {}, byId = {}, current = { key: null }, lbList = [], lbIndex = -1;
 
   const img = (id, size) => `img/${size}/${id}.jpg`;
-  const srcset = id => `${img(id, "sm")} 640w, ${img(id, "md")} 1280w, ${img(id, "lg")} 2048w`;
+  // Each size's real pixel width (portrait frames are narrower than their long edge), so the
+  // browser never picks a file smaller than the space it fills. Must match tools/build.py SIZES.
+  const BOX = { sm: 800, md: 1600 };
+  const widthOf = (ph, s) => s === "lg" ? ph.w : Math.round(ph.w * Math.min(1, BOX[s] / Math.max(ph.w, ph.h)));
+  const srcset = (ph, sizes = ["sm", "md", "lg"]) => {
+    let last = 0;
+    return sizes.map(s => [s, widthOf(ph, s)]).filter(([, w]) => w > last && (last = w))
+      .map(([s, w]) => `${img(ph.id, s)} ${w}w`).join(", ");
+  };
+  // CSS width a photo is drawn at with object-fit: cover (it overflows the box) or contain
+  const coverSizes = (ph, bw, bh, zoom = 1) => `${Math.ceil(Math.max(bw, bh * ph.w / ph.h) * zoom)}px`;
+  const containSizes = (ph, bw, bh) => bw && bh ? `${Math.ceil(Math.min(bw, bh * ph.w / ph.h))}px` : "100vw";
   const placeName = ph => P[ph.p].name;
   const where = ph => ph.city ? `${ph.city}, ${placeName(ph)}` : placeName(ph);
   const titleOf = ph => ph.title || ph.landmark || where(ph);
@@ -37,8 +48,9 @@
   }).catch(() => { view.innerHTML = `<p class="noscript">The photographs didn't load. Refresh the page to try again.</p>`; });
 
   function preloadCovers() {
-    const size = innerWidth * devicePixelRatio > 1500 ? "lg" : "md";
-    D.places.forEach((p, i) => setTimeout(() => { const im = new Image(); im.src = img(p.cover, size); }, i * 250));
+    // fetch the same file the stage's srcset will pick, so it's already cached
+    const pick = ph => widthOf(ph, "md") >= parseFloat(coverSizes(ph, innerWidth, innerHeight, 1.05)) * devicePixelRatio ? "md" : "lg";
+    D.places.forEach((p, i) => setTimeout(() => { const im = new Image(); im.src = img(p.cover, pick(byId[p.cover])); }, i * 250));
   }
 
   // ---------- router ----------
@@ -98,8 +110,8 @@
     if (prev.dataset.id === ph.id && prev.classList.contains("on")) return label(p, ph);
     next.onload = () => { next.classList.add("on"); prev.classList.remove("on"); };
     next.dataset.id = ph.id;
-    next.sizes = "100vw";
-    next.srcset = `${img(ph.id, "md")} 1280w, ${img(ph.id, "lg")} 2048w`;
+    next.sizes = coverSizes(ph, innerWidth, innerHeight, 1.05);   // the stage zooms in from 105%
+    next.srcset = srcset(ph, ["md", "lg"]);
     next.src = img(ph.id, "md");
     if (next.complete && next.naturalWidth) next.onload();
     stageFront = 1 - stageFront;
@@ -123,7 +135,7 @@
       html += `<div class="row" style="height:${h.toFixed(1)}px">` + row.map(ph => {
         const w = (ph.w / ph.h) * h;
         return `<a class="tile" href="${tileHref(ph)}" style="width:${w.toFixed(1)}px;--c:${ph.c}" aria-label="${esc(altOf(ph))}">
-          <img loading="lazy" decoding="async" alt="${esc(altOf(ph))}" src="${img(ph.id, "sm")}" srcset="${srcset(ph.id)}" sizes="${Math.ceil(w)}px" width="${Math.round(w)}" height="${Math.round(h)}"></a>`;
+          <img loading="lazy" decoding="async" alt="${esc(altOf(ph))}" src="${img(ph.id, "sm")}" srcset="${srcset(ph)}" sizes="${Math.ceil(w)}px" width="${Math.round(w)}" height="${Math.round(h)}"></a>`;
       }).join("") + `</div>`;
       row = []; sum = 0;
     };
@@ -154,7 +166,7 @@
         <li><button aria-pressed="true" data-city="">All<span class="k">${p.count}</span></button></li>
         ${p.cities.map(([c, n]) => `<li><button aria-pressed="false" data-city="${esc(c)}">${esc(c)}<span class="k">${n}</span></button></li>`).join("")}</ul>` : "";
     view.innerHTML = `<section class="cover" style="--c:${cover.c}">
-        <img alt="${esc(altOf(cover))}" srcset="${img(cover.id, "md")} 1280w, ${img(cover.id, "lg")} 2048w" sizes="100vw" src="${img(cover.id, "md")}">
+        <img alt="${esc(altOf(cover))}">
         <h1 class="ptitle">${esc(p.name)}</h1></section>
       <div class="pmeta"><span class="count">${plural(p.count, "photograph")}${p.years.length ? ", " + yearsText(p.years) : ""}</span>
         ${p.coords ? `<span class="coords" title="${esc(p.city || p.name)}">${coordText(p.coords)}</span>` : ""}</div>
@@ -162,7 +174,10 @@
       <div class="grid" id="grid"></div>
       <a class="next" href="#/places/${nextP.slug}" style="--accent:${nextP.accent}"><small>Next place</small><b>${esc(nextP.name)}</b></a>
       ${footer()}`;
-    const cimg = $(".cover img", view);
+    const cimg = $(".cover img", view), cbox = cimg.parentElement.getBoundingClientRect();
+    cimg.sizes = coverSizes(cover, cbox.width, cbox.height);
+    cimg.srcset = srcset(cover, ["md", "lg"]);
+    cimg.src = img(cover.id, "md");
     cimg.complete && cimg.naturalWidth ? cimg.classList.add("in") : cimg.addEventListener("load", () => cimg.classList.add("in"), { once: true });
     let shown = p.photos;
     const grid = $("#grid");
@@ -255,8 +270,9 @@
     lbImg.style.setProperty("--c", ph.c);
     lbImg.alt = altOf(ph);
     lbImg.onload = () => lbImg.classList.add("in");
-    lbImg.sizes = "100vw";
-    lbImg.srcset = `${img(ph.id, "md")} 1280w, ${img(ph.id, "lg")} 2048w`;
+    const frame = lbImg.parentElement;
+    lbImg.sizes = containSizes(ph, frame.clientWidth, frame.clientHeight);
+    lbImg.srcset = srcset(ph, ["md", "lg"]);
     lbImg.src = img(ph.id, "lg");
     if (lbImg.complete && lbImg.naturalWidth) lbImg.classList.add("in");
     $("#lb-title").textContent = titleOf(ph);
